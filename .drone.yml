@@ -1,0 +1,46 @@
+build:
+  ami:
+    debug: true
+    image: localhost:5000/plataforma/packer-buildpack:master-a01c657-0
+    environment:
+      OAS_REPO: $$OAS_REPO
+      OAS_VPC: $$OAS_VPC
+      OAS_SUBNET: $$OAS_SUBNET
+      OAS_FORCE_CLEANUP: false
+      AWS_ACCESS_KEY_ID: $$AWS_ACCESS_KEY_ID
+      AWS_SECRET_ACCESS_KEY: $$AWS_SECRET_ACCESS_KEY
+      AWS_DEFAULT_OUTPUT: json
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_SPOT_PRICE_BID: 0.020
+      OAS_EXTERNAL_REF: $$BRANCH-$${COMMIT:0:7}-$$BUILD_NUMBER
+      PACKER_MOCK_CREATION: false
+      PACKER_INSTANCE_TYPE: m3.medium
+    commands:
+      - ./ci.sh
+
+publish:
+  docker:
+    registry: 172.17.0.1:5000
+    repo: plataforma/condor-db-image
+    tag:
+      - latest
+      - $$BRANCH-$${COMMIT:0:7}-$$BUILD_NUMBER
+    file: Dockerfile
+    insecure: true
+    storage_driver: overlay
+
+cache:
+  mount:
+    - /drone/docker
+
+notify:
+  webhook:
+    urls:
+      - https://api.telegram.org/bot$$TELEGRAM_BOT_KEY/sendMessage
+    content_type: application/json
+    template: >
+      {
+        "chat_id": "$$TELEGRAM_CHAT_ID",
+        "parse_mode": "Markdown",
+        "text": "[{{uppercase build.status}}]({{build.link_url}}) {{repo.full_name}}:{{build.branch}}-{{truncate build.commit 7}}-{{build.number}} {{build.author}} authored \"{{truncate build.message 25}}\"... took {{duration build.started_at build.finished_at}}"
+      }

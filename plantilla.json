@@ -1,0 +1,68 @@
+{
+
+  "variables": {
+    "oas-repo-name": "{{env `OAS_REPO`}}",
+    "oas-vpc-id": "{{env `OAS_VPC`}}",
+    "oas-subnet-id": "{{env `OAS_SUBNET`}}",
+    "external-ref": "{{env `OAS_EXTERNAL_REF`}}",
+    "expiration-timestamp": "{{env `OAS_EXPIRATION_TIMESTAMP`}}",
+    "packer-expiration-timestamp": "{{env `PACKER_EXPIRATION_TIMESTAMP`}}",
+    "spot_price_bid": "{{env `AWS_SPOT_PRICE_BID`}}",
+    "instance_type": "{{env `PACKER_INSTANCE_TYPE`}}"
+  },
+
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "ssh_pty": "true",
+      "ami_name": "condor {{user `external-ref`}}",
+      "tags": {
+        "ami-name": "condor",
+        "external-ref": "{{user `external-ref`}}",
+        "promoted": "no",
+        "expiration-timestamp": "{{user `expiration-timestamp`}}"
+      },
+      "run_tags": {
+        "ami-name": "condor",
+        "external-ref": "{{user `external-ref`}}",
+        "promoted": "no",
+        "expiration-timestamp": "{{user `packer-expiration-timestamp`}}"
+      },
+      "instance_type": "{{user `instance_type`}}",
+      "spot_price": "{{user `spot_price_bid`}}",
+      "spot_price_auto_product": "Linux/UNIX (Amazon VPC)",
+      "ssh_timeout": "10m",
+      "associate_public_ip_address": true,
+      "region": "us-east-1",
+      "source_ami": "ami-6d1c2007",
+      "ssh_username": "centos",
+      "iam_instance_profile": "oas-ami-builder-role",
+      "launch_block_device_mappings": [
+        {
+          "volume_type": "gp2",
+          "device_name": "/dev/sda1",
+          "delete_on_termination": true,
+          "volume_size": 30
+        }
+      ],
+      "vpc_id": "{{user `oas-vpc-id`}}",
+      "subnet_id": "{{user `oas-subnet-id`}}"
+    }
+  ],
+
+  "provisioners": [
+    {
+      "type": "shell",
+      "script": "scripts/instalar-repositorios-adicionales.sh"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/instalar-paquetes.sh"
+    },
+    {
+      "type": "shell",
+      "script": "scripts/instalar-mariadb.sh"
+    }
+  ]
+
+}
