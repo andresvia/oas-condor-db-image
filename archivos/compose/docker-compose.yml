@@ -8,6 +8,7 @@ services:
     - MYSQL_DATABASE=app
     - MYSQL_USER=app_user01
     - MYSQL_PASSWORD=password
+    - MYSQL_ALLOW_EMPTY_PASSWORD=yes
   postgres:
     image: postgres:9.5.3
     ports:
