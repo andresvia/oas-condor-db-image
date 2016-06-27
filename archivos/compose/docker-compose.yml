@@ -1,0 +1,25 @@
+version: '2'
+services:
+  mysql:
+    image: mysql:5.7.13
+    ports:
+    - 3306:3306
+    environment:
+    - MYSQL_DATABASE=app
+    - MYSQL_USER=app_user01
+    - MYSQL_PASSWORD=password
+  postgres:
+    image: postgres:9.5.3
+    ports:
+    - 5432:5432
+    environment:
+    - POSTGRES_DB=app
+    - POSTGRES_USER=app_user01
+    - POSTGRES_PASSWORD=password
+  oracle:
+    image: alexeiled/docker-oracle-xe-11g:latest
+    ports:
+    - 1521:1521
+    volumes:
+    - ./init-oracle:/etc/entrypoint-initdb.d
+    shm_size: 2G

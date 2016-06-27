@@ -15,15 +15,15 @@
     {
       "type": "amazon-ebs",
       "ssh_pty": "true",
-      "ami_name": "condor {{user `external-ref`}}",
+      "ami_name": "condor-db {{user `external-ref`}}",
       "tags": {
-        "ami-name": "condor",
+        "ami-name": "condor-db",
         "external-ref": "{{user `external-ref`}}",
         "promoted": "no",
         "expiration-timestamp": "{{user `expiration-timestamp`}}"
       },
       "run_tags": {
-        "ami-name": "condor",
+        "ami-name": "condor-db",
         "external-ref": "{{user `external-ref`}}",
         "promoted": "no",
         "expiration-timestamp": "{{user `packer-expiration-timestamp`}}"
@@ -52,6 +52,11 @@
 
   "provisioners": [
     {
+      "type": "file",
+      "source": "archivos",
+      "destination": "/tmp"
+    },
+    {
       "type": "shell",
       "script": "scripts/instalar-repositorios-adicionales.sh"
     },
@@ -61,7 +66,7 @@
     },
     {
       "type": "shell",
-      "script": "scripts/instalar-mariadb.sh"
+      "script": "scripts/instalar-bases.sh"
     }
   ]
 

@@ -1,0 +1,8 @@
+CREATE USER app_user01
+  IDENTIFIED BY password;
+
+GRANT CREATE SESSION
+  TO app_user01;
+
+GRANT ALL PRIVILEGES
+  TO app_user01;
