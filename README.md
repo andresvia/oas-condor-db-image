@@ -42,6 +42,46 @@ El password es "password".
 
      psql -h x.x.x.x -U app_user01 -W app
 
+vagrant
+-------
+
+Luego de aprovisionar con `vagrant up --provision`, las bases estarán listas en:
+
+### mysql
+
+    mysql -h dbs.192.168.12.95.xip.io -u app_user01 -ppassword app
+
+### oracle xe
+
+    sqlplus 'app_user01/password@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(Host=dbs.192.168.12.95.xip.io)(Port=1521))(CONNECT_DATA=(SID=xe)))'
+
+### postgres
+
+El password es "password".
+
+    psql -h dbs.192.168.12.95.xip.io -U app_user01 -W app
+
+docker
+------
+
+*Nota:* debes tener los puertos `3306`, `5432` y `1521` libres en tu máquina.
+
+Luego de aprovisionar con `docker-compose --file archivos/compose/docker-compose.yml up --build -d`, las bases estarán listas en localhost.
+
+### mysql
+
+    mysql -h 127.0.0.1 -u app_user01 -ppassword app
+
+### oracle xe
+
+    sqlplus 'app_user01/password@(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(Host=127.0.0.1)(Port=1521))(CONNECT_DATA=(SID=xe)))'
+
+### postgres
+
+El password es "password".
+
+    psql -h 127.0.0.1 -U app_user01 -W app
+
 Requerimientos y Mantenimiento
 ==============================
 
